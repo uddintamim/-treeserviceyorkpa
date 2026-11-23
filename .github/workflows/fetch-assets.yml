@@ -1,0 +1,29 @@
+name: Fetch live assets
+
+on:
+  push:
+    paths:
+      - scripts/fetch-live.sh
+      - .github/workflows/fetch-assets.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download missing files from the live site
+        run: bash scripts/fetch-live.sh | tee fetch.log
+      - name: Commit results
+        run: |
+          rm -f fetch.log.tmp
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          grep -c '^FAIL' fetch.log || true
+          mv fetch.log live-snapshot/fetch.log 2>/dev/null || true
+          git add -A
+          git diff --cached --quiet || git commit -m "Add live snapshot and missing assets from the live site"
+          git push
