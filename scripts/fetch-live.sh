@@ -58,5 +58,16 @@ done
 for f in Lato Fjalla_One Lora Questrial; do get "https://cdn2.editmysite.com/fonts/$f/font.css" "public/weebly-cdn/fonts/$f/font.css"; done
 get "https://cdn2.editmysite.com/js/lang/en/stl.js" "public/weebly-cdn/js/lang/en/stl.js"
 
-get "https://www.weebly.com/uploads/reseller/assets/157356421-favicon.ico" "public/favicon.ico"
 python3 scripts/fetch-css-deps.py
+
+# 4. EVERY blog post listed in the live sitemap (the backup only contained 10), plus blog index pages 2..N
+for slug in $(grep -o '<loc>[^<]*/blog/[^<]*' live-snapshot/sitemap.xml | sed 's#.*/blog/##'); do
+  [ -f "live-snapshot/blog/$slug.html" ] || get "$HOST/blog/$slug" "live-snapshot/blog/$slug.html"
+done
+for n in $(seq 2 20); do
+  get "$HOST/blog/previous/$n" "live-snapshot/blog/previous/$n.html"
+  [ -f "live-snapshot/blog/previous/$n.html" ] || break
+done
+
+# 5. every image/file those live pages reference that we do not have yet
+python3 scripts/fetch-uploads.py
