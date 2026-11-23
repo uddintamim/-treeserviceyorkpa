@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -24,6 +24,14 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npm run build
+      - name: Publish ready-to-upload site to the "siteground" branch
+        run: |
+          cd dist
+          git init -q
+          git checkout -q -b siteground
+          git add -A -f
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Built site from ${GITHUB_SHA}"
+          git push -q -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" siteground
       - name: Upload SiteGround package (upload the contents of this folder to public_html)
         uses: actions/upload-artifact@v4
         with:
