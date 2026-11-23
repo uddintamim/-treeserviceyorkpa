@@ -57,3 +57,6 @@ for p in css/sites.css css/old/fancybox.css css/social-icons.css js/jquery-1.8.3
 done
 for f in Lato Fjalla_One Lora Questrial; do get "https://cdn2.editmysite.com/fonts/$f/font.css" "public/weebly-cdn/fonts/$f/font.css"; done
 get "https://cdn2.editmysite.com/js/lang/en/stl.js" "public/weebly-cdn/js/lang/en/stl.js"
+
+get "https://www.weebly.com/uploads/reseller/assets/157356421-favicon.ico" "public/favicon.ico"
+python3 scripts/fetch-css-deps.py
