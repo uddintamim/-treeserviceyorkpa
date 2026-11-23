@@ -1,0 +1,40 @@
+<script type="text/javascript" src="files/theme/plugins.js"></script>
+	<script type="text/javascript" src="files/theme/custom.js"></script>
+	                            
+<script type="text/javascript">
+    (function () {
+        var head = document.getElementsByTagName("head").item(0);
+        var script = document.createElement("script");
+        
+        var src = (document.location.protocol == 'https:' 
+            ? 'https://www.formilla.com/scripts/feedback.js' 
+            : 'http://www.formilla.com/scripts/feedback.js');
+        
+        script.setAttribute("type", "text/javascript"); 
+        script.setAttribute("src", src); script.setAttribute("async", true);        
+
+        var complete = false;
+        
+        script.onload = script.onreadystatechange = function () {
+            if (!complete && (!this.readyState 
+                    || this.readyState == 'loaded' 
+                    || this.readyState == 'complete')) {
+                complete = true;
+                Formilla.guid = 'csae5520-8d76-4898-b289-ee5c64f5a321';
+                Formilla.loadWidgets();                
+            }
+        };
+
+        head.appendChild(script);
+    })();
+</script>
+                                    
+    <div id="customer-accounts-app"></div>
+    <script src="https://cdn11.editmysite.com/js/site/main-customer-accounts-site.js?buildtime=1234"></script>
+
+		<script>
+$(document).ready(function() {
+$(".wsite-logo a").attr("href", "tel:7172164888");
+});
+</script>
+	

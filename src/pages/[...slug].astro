@@ -1,0 +1,38 @@
+---
+// One route renders every page. Page metadata lives in src/data/pages.json,
+// page bodies live in src/fragments/pages/<slug>.{banner,main,tail}.html.
+// With build.format = 'file' this emits about.html, services.html, blog/<slug>.html, index.html ...
+import Layout from '../layouts/Layout.astro';
+import pages from '../data/pages.json';
+
+const frags = import.meta.glob('../fragments/pages/**/*.html', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
+
+export function getStaticPaths() {
+  return Object.values(pages).map((p: any) => ({
+    params: { slug: p.slug === 'index' ? undefined : p.slug },
+    props: { slug: p.slug },
+  }));
+}
+
+const { slug } = Astro.props;
+const p: any = (pages as any)[slug];
+const get = (kind: string) => frags[`../fragments/pages/${slug}.${kind}.html`];
+---
+<Layout
+  slug={slug}
+  title={p.title}
+  description={p.description}
+  keywords={p.keywords}
+  bodyClass={p.bodyClass}
+  pageId={p.pageId}
+  noCache={p.noCache}
+  navKind={p.navKind}
+  navId={p.navId}
+  banner={get('banner')}
+  main={get('main')}
+  tail={p.hasTail ? get('tail') : undefined}
+/>

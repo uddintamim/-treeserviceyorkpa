@@ -1,0 +1,64 @@
+---
+// Rebuilds the Weebly "Paris" theme shell: <head>, header + nav, footer, mobile nav, scripts.
+// Per-page content (title, meta, banner, main content) is passed in by src/pages/[...slug].astro.
+import headTpl from '../fragments/_head.html?raw';
+import headerHtml from '../fragments/_header.html?raw';
+import footerHtml from '../fragments/_footer.html?raw';
+import mobileNavHtml from '../fragments/_mobilenav.html?raw';
+import defaultTail from '../fragments/_tail.html?raw';
+
+const {
+  title, description, keywords, bodyClass, pageId, noCache,
+  navKind, navId, banner = '', main, tail, slug,
+} = Astro.props;
+
+// Open Graph tags: the live Weebly site emits these at serve time (they are not in the backup).
+const SITE = 'https://www.treeserviceyorkpa.org';
+const SITE_NAME = 'Tree Service York PA';
+const ogTitle = title.startsWith(SITE_NAME + ' - ')
+  ? title.slice(SITE_NAME.length + 3)
+  : title.endsWith(' - ' + SITE_NAME)
+    ? title.slice(0, -(SITE_NAME.length + 3))
+    : title;
+const ogUrl = slug === 'index' ? SITE + '/' : slug.startsWith('blog/') ? `${SITE}/${slug}` : `${SITE}/${slug}.html`;
+const ogImage = SITE + '/uploads/8/6/7/7/86774124/tree-removal-york-pa.png';
+
+// Weebly marks the current menu entry: top-level items get id="active",
+// flyout items get the extra class "wsite-nav-current".
+function markActive(html: string): string {
+  if (!navId) return html;
+  if (navKind === 'top') return html.replaceAll(`id="${navId}"`, 'id="active"');
+  if (navKind === 'sub') {
+    return html.replace(
+      new RegExp(`(id="${navId}"\\s*class="wsite-menu-subitem-wrap)\\s*"`, 'g'),
+      '$1 wsite-nav-current"'
+    );
+  }
+  return html;
+}
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>{title}</title>
+{description && <meta name="description" content={description} />}
+{keywords && <meta name="keywords" content={keywords} />}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:title" content={ogTitle} />
+{description && <meta property="og:description" content={description} />}
+<meta property="og:image" content={ogImage} />
+<meta property="og:url" content={ogUrl} />
+{noCache && <meta http-equiv="cache-control" content="no-cache" />}
+<Fragment set:html={headTpl.replace('__PAGE_ID__', pageId)} />
+</head>
+<body class={bodyClass}>
+<Fragment set:html={markActive(headerHtml)} />
+<Fragment set:html={banner} />
+<Fragment set:html={main} />
+<Fragment set:html={footerHtml} />
+<Fragment set:html={markActive(mobileNavHtml)} />
+<Fragment set:html={tail ?? defaultTail} />
+</body>
+</html>
