@@ -1,22 +1,23 @@
-# Tree Service York PA – Astro rebuild (from Weebly backup)
+# Tree Service York PA – Astro rebuild of the Weebly site
 
-Static Astro site that reproduces the Weebly pages: same URLs (`/about.html`, `/services.html`, `/blog/<slug>`), titles, meta description/keywords, headings, links, image `src`/`alt` and Weebly markup/CSS classes.
+139 static pages (37 main pages, 93 blog posts, 9 blog index pages) built with Astro. Content, titles, meta description/keywords,
+Open Graph tags, headings, links, image `src`/`alt`, robots.txt and sitemap.xml were taken from the live site
+(`live-snapshot/` is the reference copy) and verified identical page by page.
 
-## Before going live
-1. `npm install` (creates `package-lock.json`; commit it).
-2. While the old Weebly site is still live, run `bash scripts/fetch-missing-assets.sh` (logo, hero/background images and 9 blog posts were not in the backup).
-3. `npm run build` and check `dist/`.
-4. Push to GitHub `main`; Settings → Pages → Source: **GitHub Actions**.
-5. DNS: `www` CNAME → `<user>.github.io`; apex A records → GitHub Pages IPs. `public/CNAME` is `www.treeserviceyorkpa.org`.
+## Upload to SiteGround (no WordPress, no installs)
+1. GitHub → **Actions** → latest "Deploy to GitHub Pages" run → **Artifacts** → download **siteground-upload** (a zip).
+2. Unzip it. SiteGround → **Site Tools → Site → File Manager → public_html**.
+3. Upload the *contents* of the unzipped folder (including the hidden `.htaccess`) into `public_html`.
+4. Test on a temporary subdomain first, then point the real domain.
 
 ## Layout
 - `src/data/pages.json` – per-page title/meta/body class/nav state
-- `src/fragments/pages/*` – per-page banner + main content (original markup)
-- `src/fragments/_*.html` – shared head, header/nav, footer, mobile nav, scripts
+- `src/fragments/pages/*` – per-page content (identical to live markup); `src/fragments/_*.html` – shared head/header/footer/scripts
 - `src/layouts/Layout.astro`, `src/pages/[...slug].astro` – templates/routing
-- `public/` – uploads, CSS/JS, sitemap.xml, robots.txt, CNAME
+- `public/` – uploads (images), Weebly CSS/JS/fonts (self-hosted in `weebly-cdn/`), robots.txt, sitemap.xml, `.htaccess`
+- `scripts/fetch-live.sh` – re-downloads assets/snapshot from the live site (runs via the "Fetch live assets" workflow)
 
-## Known notes
-- Weebly CDN CSS/JS (`cdn11.editmysite.com`) is still referenced (switched to https) for identical styling; it works only while Weebly serves it. Plan to self-host.
-- Weebly forms/widgets (Leadsnap, Formilla, Widgetic) are external embeds and kept as-is.
-- Google Analytics `UA-135608298-1` is kept, but Universal Analytics no longer collects data; add a GA4 tag.
+## Known remaining dependencies on Weebly
+- FAQ accordion + Widgetic widget load their scripts from `marketplace.editmysite.com`.
+- Weebly's `main.js` can lazy-load extra modules from `cdn*.editmysite.com`.
+- Google Analytics tag `UA-135608298-1` is Universal Analytics (no longer collects data) – add a GA4 tag.

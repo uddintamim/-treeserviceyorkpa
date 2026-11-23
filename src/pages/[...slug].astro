@@ -23,7 +23,6 @@ const p: any = (pages as any)[slug];
 const get = (kind: string) => frags[`../fragments/pages/${slug}.${kind}.html`];
 ---
 <Layout
-  slug={slug}
   title={p.title}
   description={p.description}
   keywords={p.keywords}
@@ -32,6 +31,7 @@ const get = (kind: string) => frags[`../fragments/pages/${slug}.${kind}.html`];
   noCache={p.noCache}
   navKind={p.navKind}
   navId={p.navId}
+  og={get('og')}
   banner={get('banner')}
   main={get('main')}
   tail={p.hasTail ? get('tail') : undefined}

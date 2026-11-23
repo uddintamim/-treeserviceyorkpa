@@ -9,7 +9,10 @@ RewriteRule ^ https://www.treeserviceyorkpa.org%{REQUEST_URI} [L,R=301]
 RewriteCond %{HTTPS} off
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# 3) extensionless URLs (e.g. /blog/when-to-prune-trees) serve the matching .html file
+# 3) old Weebly blog permalinks (/1/post/2018/08/slug.html) -> /blog/slug
+RewriteRule ^1/post/[0-9]{4}/[0-9]{2}/([a-z0-9-]+)\.html$ /blog/$1 [L,R=301]
+
+# 4) extensionless URLs (e.g. /blog/when-to-prune-trees) serve the matching .html file
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{DOCUMENT_ROOT}/$1.html -f

@@ -1,4 +1,10 @@
-User-agent: *
-Allow: /
-
 Sitemap: https://www.treeserviceyorkpa.org/sitemap.xml
+
+User-agent: NerdyBot
+Disallow: /
+
+User-agent: *
+Disallow: /ajax/
+Disallow: /apps/
+Disallow: /confirmation.html
+Disallow: /leadform.html
